@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whitelist UID - DarkModz Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // Timer function
+    let timer;
+    let countdown;
+    let timeLeft = 7200; // 2 hours in seconds
+
+    function startTimer() {
+      countdown = setInterval(function () {
+        timeLeft--;
+        let hours = Math.floor(timeLeft / 3600);
+        let minutes = Math.floor((timeLeft % 3600) / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").innerHTML = `Whitelist valid for: ${hours}h ${minutes}m ${seconds}s`;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          document.getElementById("timer").innerHTML = "Your whitelist has expired. Please try again.";
+        }
+      }, 1000);
+    }
+
+    function whitelistUID() {
+      let uid = document.getElementById("uidInput").value;
+      if (uid) {
+        document.getElementById("uidSection").style.display = "none";
+        document.getElementById("timerSection").style.display = "block";
+        startTimer();
+      } else {
+        alert("Please enter a valid UID.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <div class="main-container">
+    <h1>Whitelist Your UID</h1>
+    <p>Enter your UID below to get whitelisted for 2 hours.</p>
+
+    <!-- UID Input Section -->
+    <div id="uidSection">
+      <input type="text" id="uidInput" placeholder="Enter your UID" />
+      <button class="uid-btn" onclick="whitelistUID()">Submit UID</button>
+    </div>
+
+    <!-- Timer Section -->
+    <div id="timerSection" style="display:none;">
+      <p id="timer">Whitelist valid for: 2h 0m 0s</p>
+    </div>
+    
+    <a class="back-btn" href="index.html">Back to Home</a>
+  </div>
+</body>
+</html>
