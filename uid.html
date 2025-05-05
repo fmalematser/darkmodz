@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whitelist UID - DarkModz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <div class="main-container">
+    <h1>Whitelist Your UID</h1>
+    <p>Enter your Free Fire UID to start the 2-hour verification timer.</p>
+
+    <form onsubmit="startTimer(event)">
+      <input type="text" id="uidInput" placeholder="Enter UID" required />
+      <button type="submit" class="download-btn">Start Timer</button>
+    </form>
+
+    <div id="timer"></div>
+  </div>
+
+  <script>
+    function startTimer(e) {
+      e.preventDefault();
+      const uid = document.getElementById('uidInput').value;
+      localStorage.setItem("darkmodz_uid", uid);
+      const now = new Date().getTime();
+      const end = now + 2 * 60 * 60 * 1000;
+      localStorage.setItem("darkmodz_timer", end);
+      updateTimer();
+    }
+
+    function updateTimer() {
+      const timerEl = document.getElementById("timer");
+      const end = localStorage.getItem("darkmodz_timer");
+      if (!end) return;
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        let distance = end - now;
+        if (distance <= 0) {
+          clearInterval(interval);
+          timerEl.innerText = "Your UID is now whitelisted!";
+          return;
+        }
+        const hrs = Math.floor((distance / (1000 * 60 * 60)));
+        const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((distance % (1000 * 60)) / 1000);
+        timerEl.innerText = `Time left: ${hrs}h ${mins}m ${secs}s`;
+      }, 1000);
+    }
+
+    if (localStorage.getItem("darkmodz_timer")) {
+      updateTimer();
+    }
+  </script>
+</body>
+</html>
