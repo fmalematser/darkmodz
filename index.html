@@ -10,64 +10,13 @@
 <body>
   <div class="bg-animation"></div>
 
-  <div class="fade-header" id="fadeHeader">
-    <div class="main-container">
-      <h1>Welcome to DarkModz Project</h1>
-      <p>The #1 Free Fire mod website. Secure, clean, and free to use.</p>
-    </div>
-  </div>
-
   <div class="main-container">
+    <h1>Welcome to DarkModz Project</h1>
+    <p>The #1 Free Fire mod website. Secure, clean, and free to use.</p>
+
     <a class="download-btn" href="https://fmalematser.github.io/darkmodzproject/" target="_blank">Download Mod APK</a>
-    <a class="uid-btn" href="#" onclick="handleUID()">Whitelist UID</a>
+    <a class="uid-btn" href="uid.html">Whitelist UID</a>
     <a class="discord-btn" href="https://discord.com/invite/ffbeta" target="_blank">Join Discord</a>
-    <div id="timer"></div>
   </div>
-
-  <script>
-    // Fade header on scroll
-    const header = document.getElementById('fadeHeader');
-    let lastScroll = 0;
-    window.addEventListener('scroll', () => {
-      const currentScroll = window.scrollY;
-      header.style.opacity = currentScroll > lastScroll ? '0' : '1';
-      lastScroll = currentScroll;
-    });
-
-    // UID and countdown timer
-    function handleUID() {
-      const uid = prompt("Enter your Free Fire UID:");
-      if (!uid) return;
-      localStorage.setItem("darkmodz_uid", uid);
-      const now = new Date().getTime();
-      const end = now + 2 * 60 * 60 * 1000;
-      localStorage.setItem("darkmodz_timer", end);
-      updateTimer();
-    }
-
-    function updateTimer() {
-      const timerEl = document.getElementById("timer");
-      const end = localStorage.getItem("darkmodz_timer");
-      if (!end) return;
-      const interval = setInterval(() => {
-        const now = new Date().getTime();
-        let distance = end - now;
-        if (distance <= 0) {
-          clearInterval(interval);
-          timerEl.innerText = "Your UID is now whitelisted!";
-          return;
-        }
-        const hrs = Math.floor((distance / (1000 * 60 * 60)));
-        const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((distance % (1000 * 60)) / 1000);
-        timerEl.innerText = `UID Whitelist Countdown: ${hrs}h ${mins}m ${secs}s`;
-      }, 1000);
-    }
-
-    // If already whitelisted, continue countdown
-    if (localStorage.getItem("darkmodz_timer")) {
-      updateTimer();
-    }
-  </script>
 </body>
 </html>
