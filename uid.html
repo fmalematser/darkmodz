@@ -32,6 +32,7 @@
     function whitelistUID() {
       const uid = document.getElementById("uidInput").value;
       if (uid) {
+        // Reset the timer and start over when a new UID is entered
         const startTime = Date.now();
         localStorage.setItem("whitelistStartTime", startTime.toString());
 
@@ -53,7 +54,7 @@
           document.getElementById("timerSection").style.display = "block";
           startTimer(startTime);
         } else {
-          // Expired
+          // Expired, so reset everything
           localStorage.removeItem("whitelistStartTime");
         }
       }
@@ -76,6 +77,8 @@
     <!-- Timer Section -->
     <div id="timerSection" style="display:none;">
       <p id="timer">Whitelist valid for: 2h 0m 0s</p>
+      <!-- Allow users to change UID -->
+      <button class="uid-btn" onclick="whitelistUID()">Enter a new UID</button>
     </div>
     
     <a class="back-btn" href="index.html">Back to Home</a>
