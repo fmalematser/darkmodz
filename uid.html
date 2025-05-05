@@ -6,60 +6,6 @@
   <title>Whitelist UID - DarkModz Project</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  <script>
-    const WHITELIST_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
-    let countdown;
-
-    function startTimer(startTime) {
-      countdown = setInterval(() => {
-        const now = Date.now();
-        const timePassed = now - startTime;
-        const timeLeft = WHITELIST_DURATION - timePassed;
-
-        if (timeLeft <= 0) {
-          clearInterval(countdown);
-          document.getElementById("timer").innerText = "Your whitelist has expired. Please try again.";
-          localStorage.removeItem("whitelistStartTime");
-        } else {
-          const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-          const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-          document.getElementById("timer").innerText = `Whitelist valid for: ${hours}h ${minutes}m ${seconds}s`;
-        }
-      }, 1000);
-    }
-
-    function whitelistUID() {
-      const uid = document.getElementById("uidInput").value;
-      if (uid) {
-        // Reset the timer and start over when a new UID is entered
-        const startTime = Date.now();
-        localStorage.setItem("whitelistStartTime", startTime.toString());
-
-        document.getElementById("uidSection").style.display = "none";
-        document.getElementById("timerSection").style.display = "block";
-        startTimer(startTime);
-      } else {
-        alert("Please enter a valid UID.");
-      }
-    }
-
-    window.onload = () => {
-      const savedStartTime = localStorage.getItem("whitelistStartTime");
-      if (savedStartTime) {
-        const startTime = parseInt(savedStartTime);
-        const timePassed = Date.now() - startTime;
-        if (timePassed < WHITELIST_DURATION) {
-          document.getElementById("uidSection").style.display = "none";
-          document.getElementById("timerSection").style.display = "block";
-          startTimer(startTime);
-        } else {
-          // Expired, so reset everything
-          localStorage.removeItem("whitelistStartTime");
-        }
-      }
-    };
-  </script>
 </head>
 <body>
   <div class="bg-animation"></div>
@@ -68,20 +14,70 @@
     <h1>Whitelist Your UID</h1>
     <p>Enter your UID below to get whitelisted for 2 hours.</p>
 
-    <!-- UID Input Section -->
+    <!-- UID Input Section (always visible) -->
     <div id="uidSection">
       <input type="text" id="uidInput" placeholder="Enter your UID" />
       <button class="uid-btn" onclick="whitelistUID()">Submit UID</button>
     </div>
 
-    <!-- Timer Section -->
-    <div id="timerSection" style="display:none;">
-      <p id="timer">Whitelist valid for: 2h 0m 0s</p>
-      <!-- Allow users to change UID -->
-      <button class="uid-btn" onclick="whitelistUID()">Enter a new UID</button>
+    <!-- Timer Section (shown when timer starts or expires) -->
+    <div id="timerSection" style="display:none; margin-top: 1rem;">
+      <p id="timer"></p>
     </div>
     
     <a class="back-btn" href="index.html">Back to Home</a>
   </div>
+
+  <script>
+    const WHITELIST_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+    let countdown;
+
+    function updateTimer(startTime) {
+      const now = Date.now();
+      const timeLeft = WHITELIST_DURATION - (now - startTime);
+      const timerEl = document.getElementById('timer');
+      document.getElementById('timerSection').style.display = 'block';
+
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        localStorage.removeItem('whitelistStartTime');
+        timerEl.innerText = 'Your whitelist has expired. Please try again.';
+      } else {
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        timerEl.innerText = `Whitelist valid for: ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }
+
+    function startTimer(startTime) {
+      if (countdown) clearInterval(countdown);
+      updateTimer(startTime);
+      countdown = setInterval(() => updateTimer(startTime), 1000);
+    }
+
+    function whitelistUID() {
+      const uid = document.getElementById('uidInput').value.trim();
+      if (!uid) {
+        alert('Please enter a valid UID.');
+        return;
+      }
+      const startTime = Date.now();
+      localStorage.setItem('whitelistStartTime', startTime.toString());
+      startTimer(startTime);
+    }
+
+    window.onload = () => {
+      const saved = localStorage.getItem('whitelistStartTime');
+      if (saved) {
+        const startTime = parseInt(saved, 10);
+        if (Date.now() - startTime < WHITELIST_DURATION) {
+          startTimer(startTime);
+        } else {
+          localStorage.removeItem('whitelistStartTime');
+        }
+      }
+    };
+  </script>
 </body>
 </html>
