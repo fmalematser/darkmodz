@@ -8,42 +8,33 @@
   <link rel="stylesheet" href="style.css" />
   <script>
     let countdown;
-    let timeLeft;
-    let startTime;
+    let timeLeft = 7200; // 2 hours in seconds
+    let timerRunning = false;
 
-    // Check if there's saved timer data in localStorage
-    if(localStorage.getItem('whitelistStartTime') && localStorage.getItem('whitelistTimeLeft')) {
-      // Get the time left and start time from localStorage
-      timeLeft = parseInt(localStorage.getItem('whitelistTimeLeft'));
-      startTime = parseInt(localStorage.getItem('whitelistStartTime'));
-    } else {
-      // Initialize timer to 2 hours if no data is found in localStorage
-      timeLeft = 7200; // 2 hours in seconds
-      startTime = Date.now();
-      localStorage.setItem('whitelistStartTime', startTime);
+    // Check if the timer has already started from localStorage
+    if(localStorage.getItem("whitelistTimeLeft")) {
+      timeLeft = parseInt(localStorage.getItem("whitelistTimeLeft"));
     }
 
-    // Function to start the timer
     function startTimer() {
-      countdown = setInterval(function () {
-        let currentTime = Math.floor((Date.now() - startTime) / 1000);
-        timeLeft = 7200 - currentTime; // 7200 seconds = 2 hours
-
-        if (timeLeft <= 0) {
-          clearInterval(countdown);
-          document.getElementById("timer").innerHTML = "Your whitelist has expired. Please try again.";
-          localStorage.removeItem('whitelistStartTime'); // Clear the saved start time when expired
-          localStorage.removeItem('whitelistTimeLeft'); // Clear the saved timer data
-        } else {
-          let hours = Math.floor(timeLeft / 3600);
-          let minutes = Math.floor((timeLeft % 3600) / 60);
-          let seconds = timeLeft % 60;
-          document.getElementById("timer").innerHTML = `Whitelist valid for: ${hours}h ${minutes}m ${seconds}s`;
-
-          // Save the remaining time in localStorage every second
-          localStorage.setItem('whitelistTimeLeft', timeLeft);
-        }
-      }, 1000);
+      // Start the timer if it's not running already
+      if (!timerRunning) {
+        timerRunning = true;
+        countdown = setInterval(function () {
+          if (timeLeft <= 0) {
+            clearInterval(countdown);
+            document.getElementById("timer").innerHTML = "Your whitelist has expired. Please try again.";
+            localStorage.removeItem("whitelistTimeLeft"); // Clear saved timer data
+          } else {
+            let hours = Math.floor(timeLeft / 3600);
+            let minutes = Math.floor((timeLeft % 3600) / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById("timer").innerHTML = `Whitelist valid for: ${hours}h ${minutes}m ${seconds}s`;
+            timeLeft--;
+            localStorage.setItem("whitelistTimeLeft", timeLeft); // Save the remaining time to localStorage
+          }
+        }, 1000);
+      }
     }
 
     function whitelistUID() {
